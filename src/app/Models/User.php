@@ -41,4 +41,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // attendances 1対多
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
+    }
+
+    // attendance_requests 1対多
+    public function attendanceRequests()
+    {
+        return $this->hasMany(AttendanceRequest::class);
+    }
+
+    // approval_histories 1対多
+    public function approvalHistories()
+    {
+        return $this->hasMany(ApprovalHistory::class);
+    }
 }
