@@ -19,11 +19,21 @@ class Attendance extends Model
         return $this->belongsTo(User::class);
     }
 
-    // breaks 1対多
-    public function breaks()
+    // attendance_breaks 1対多
+    public function attendanceBreaks()
     {
-        return $this->hasMany(Break::class);
+        return $this->hasMany(AttendanceBreak::class);
     }
 
-    
+    // attendance_requests 1対多
+    public function attendanceRequests()
+    {
+        return $this->hasMany(AttendanceRequest::class);
+    }
+
+    // attendance_status 多対1
+    public function attendanceStatus()
+    {
+        return $this->belongsTo(AttendanceStatus::class, 'status_id');
+    }
 }

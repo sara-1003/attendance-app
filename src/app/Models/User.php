@@ -48,15 +48,15 @@ class User extends Authenticatable
         return $this->hasMany(Attendance::class);
     }
 
-        // attendance_requests 1対多
-        public function attendanceRequests()
-        {
-            return $this->hasMany(AttendanceRequest::class);
-        }
+    // attendance_requests 1対多
+    public function attendanceRequests()
+    {
+        return $this->hasMany(AttendanceRequest::class);
+    }
 
-        // approval_histories 1対多
-        public function approvalHistories()
-        {
-            return $this->hasMany(ApprovalHistory::class);
-        }
+    // approval_histories 1対多
+    public function approvalHistories()
+    {
+        return $this->hasMany(ApprovalHistory::class);
+    }
 }
