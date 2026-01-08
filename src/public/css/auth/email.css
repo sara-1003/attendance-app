@@ -1,0 +1,43 @@
+/* ページ全体を縦横中央に */
+.email__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 200px auto;
+}
+
+.email__text {
+    font-weight: bold;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.btn{
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border: 1px solid #c0c0c0;
+    border-radius: 4px;
+    color: #000;
+    background: #ddd;
+}
+
+.form__button{
+    appearance: none;
+    border: none;
+    background: none;
+    font-size: 16px;
+    color: rgb(0, 68, 255);
+    cursor: pointer;
+}
+
+.btn,
+.form__button {
+    display: block;
+    width: 200px;
+    text-align: center;
+    margin: 40px 0;
+}
