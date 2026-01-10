@@ -1,0 +1,2 @@
+# MySQL データフォルダを Git 管理対象外にする
+docker/mysql/data/

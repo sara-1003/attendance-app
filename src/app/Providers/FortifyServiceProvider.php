@@ -17,6 +17,8 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Requests\LoginRequest;
 use Laravel\Fortify\Http\Requests\RegisterRequest as FortifyRegisterRequest;
 use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
+use App\Http\Responses\LoginResponse;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -57,5 +59,17 @@ class FortifyServiceProvider extends ServiceProvider
 
         $this->app->bind(FortifyRegisterRequest::class, RegisterRequest::class);
         $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
+        $this->app->singleton(
+            \Laravel\Fortify\Contracts\LoginResponse::class,
+            LoginResponse::class
+        );
+        $this->app->singleton(\Laravel\Fortify\Contracts\LogoutResponse::class, function () {
+            return new class implements \Laravel\Fortify\Contracts\LogoutResponse {
+                public function toResponse($request)
+                {
+                    return redirect('/login');
+                }
+            };
+        });
     }
 }
