@@ -22,12 +22,13 @@ Route::get('/', function () {
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // 勤怠登録画面（認証済みのみ）
-    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.store');
     // 勤怠ボタン別
     Route::post('/attendance/start', [AttendanceController::class, 'start'])->name('attendance.start');
     Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break');
     Route::post('/attendance/resume', [AttendanceController::class, 'resume'])->name('attendance.resume');
     Route::post('/attendance/end', [AttendanceController::class, 'end'])->name('attendance.end');
+    Route::get('/attendance/list',[AttendanceController::class,'attendanceIndex'])->name('attendance.index');
 });
 
 

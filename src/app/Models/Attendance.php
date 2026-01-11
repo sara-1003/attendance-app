@@ -13,6 +13,12 @@ class Attendance extends Model
         'id',
     ];
 
+    protected $casts = [
+        'date' => 'date',
+        'clock_in' => 'datetime',
+        'clock_out' => 'datetime',
+    ];
+
     //user 多対1
     public function user()
     {

@@ -31,15 +31,28 @@
                             </li>
                         @else
                         <!-- 一般ログインの場合 -->
+                        @if($status === '退勤済')
+                            <!-- 退勤後のナビ -->
+                            <li class="header-nav__item"><a href="/attendance/list">今月の出勤一覧</a></li>
+                            <li class="header-nav__item"><a href="/stamp_correction_request/list">申請一覧</a></li>
+                            <li class="header-nav__item">
+                                <form action="{{ route('logout') }}" method="post">
+                                    @csrf
+                                    <button type="submit">ログアウト</button>
+                                </form>
+                            </li>
+                        @else
+                            <!-- 勤務中・勤務外のナビ -->
                             <li class="header-nav__item"><a href="/attendance">勤怠</a></li>
                             <li class="header-nav__item"><a href="/attendance/list">勤怠一覧</a></li>
                             <li class="header-nav__item"><a href="/stamp_correction_request/list">申請</a></li>
                             <li class="header-nav__item">
                                 <form action="{{ route('logout') }}" method="post">
-                                @csrf
+                                    @csrf
                                     <button type="submit">ログアウト</button>
                                 </form>
                             </li>
+                        @endif
                         @endif
                     </ul>
                 </nav>

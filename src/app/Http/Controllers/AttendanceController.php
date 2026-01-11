@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\AttendanceStatus;
 use App\Models\AttendanceBreak;
+use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
@@ -47,7 +48,7 @@ class AttendanceController extends Controller
             'status_id' => $statusId,
         ]);
 
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.store');
     }
 
     // 休憩入
@@ -73,7 +74,7 @@ class AttendanceController extends Controller
             'status_id' => AttendanceStatus::where('name','休憩中')->first()->id
         ]);
 
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.store');
     }
 
     // 休憩戻
@@ -102,7 +103,7 @@ class AttendanceController extends Controller
             'status_id' => AttendanceStatus::where('name','出勤中')->first()->id
         ]);
 
-        return redirect()->route('attendance.index');
+        return redirect()->route('attendance.store');
     }
 
     // 退勤
@@ -123,6 +124,35 @@ class AttendanceController extends Controller
             'status_id' => AttendanceStatus::where('name','退勤済')->first()->id
         ]);
 
-        return redirect()->route('attendance.index')->with('message','お疲れ様でした。');
+        return redirect()->route('attendance.store')->with('message','お疲れ様でした。');
+    }
+
+    // 勤怠一覧画面の表示
+    public function attendanceIndex()
+    {
+        $attendances=Attendance::with('attendanceBreaks')
+            ->where('user_id',auth()->id())
+            ->orderBy('date','desc')
+            ->get();
+
+        foreach($attendances as $attendance){
+            $totalSeconds=0;
+
+            foreach($attendance->attendanceBreaks as $break){
+                if($break->break_start && $break->break_end){
+                    $start=Carbon::parse($break->break_start);
+                    $end=Carbon::parse($break->break_end);
+
+                    $totalSeconds += $start->diffInSeconds($end);
+                }
+            }
+
+            $h=floor($totalSeconds/3600);
+            $m=floor(($totalSeconds%3600)/60);
+
+            $attendance->total_break_time=sprintf('%d:%02d',$h,$m);
+        }
+
+        return view('attendance.index',compact('attendances'));
     }
 }
