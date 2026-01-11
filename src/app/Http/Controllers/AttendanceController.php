@@ -21,9 +21,7 @@ class AttendanceController extends Controller
             ->where('date',now()->toDateString())
             ->first();
 
-        $status = $attendance?->attendanceStatus?->name ?? '勤務外';
-
-        return view('attendance.store',compact('attendance','status'));
+        return view('attendance.store',compact('attendance'));
     }
 
     // 出勤
@@ -128,16 +126,29 @@ class AttendanceController extends Controller
     }
 
     // 勤怠一覧画面の表示
-    public function attendanceIndex()
+    public function attendanceIndex(Request $request)
     {
+        $userId=auth()->id();
+
+        // 月の取得
+        $month=$request->input('month');
+        if($month){
+            $displayMonth=Carbon::createFromFormat('Y/m',$month);
+        }else{
+            $displayMonth=Carbon::now();
+        }
+
         $attendances=Attendance::with('attendanceBreaks')
-            ->where('user_id',auth()->id())
+            ->where('user_id',$userId)
+            ->whereYear('date', $displayMonth->year)
+            ->whereMonth('date', $displayMonth->month)
             ->orderBy('date','desc')
             ->get();
 
         foreach($attendances as $attendance){
             $totalSeconds=0;
 
+            // 休憩合計
             foreach($attendance->attendanceBreaks as $break){
                 if($break->break_start && $break->break_end){
                     $start=Carbon::parse($break->break_start);
@@ -149,10 +160,33 @@ class AttendanceController extends Controller
 
             $h=floor($totalSeconds/3600);
             $m=floor(($totalSeconds%3600)/60);
-
             $attendance->total_break_time=sprintf('%d:%02d',$h,$m);
+
+            // 勤怠合計
+            if($attendance->clock_in && $attendance->clock_out){
+
+                $workStart=Carbon::parse($attendance->clock_in);
+                $workEnd=Carbon::parse($attendance->clock_out);
+
+                $workSeconds=$workStart->diffInSeconds($workEnd)-$totalSeconds;
+
+                if($workSeconds<0){
+                    $workSeconds=0;
+                }
+
+                $wh=floor($workSeconds/3600);
+                $wm=floor(($workSeconds%3600)/60);
+                $attendance->work_time=sprintf('%d:%02d', $wh, $wm);
+
+
+            }else{
+                $attendance->work_time='0:00';
+            }
         }
 
-        return view('attendance.index',compact('attendances'));
+        $prevMonth=$displayMonth->copy()->subMonth()->format('Y/m');
+        $nextMonth=$displayMonth->copy()->addMonth()->format('Y/m');
+
+        return view('attendance.index',compact('attendances','displayMonth', 'prevMonth', 'nextMonth'));
     }
 }

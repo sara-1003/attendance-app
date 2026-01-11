@@ -31,7 +31,11 @@
                             </li>
                         @else
                         <!-- 一般ログインの場合 -->
-                        @if($status === '退勤済')
+                        @php
+                            $isAttendancePage = request()->is('attendance');
+                        @endphp
+
+                        @if($isAttendancePage && $status === '退勤済')
                             <!-- 退勤後のナビ -->
                             <li class="header-nav__item"><a href="/attendance/list">今月の出勤一覧</a></li>
                             <li class="header-nav__item"><a href="/stamp_correction_request/list">申請一覧</a></li>

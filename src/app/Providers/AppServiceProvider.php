@@ -26,11 +26,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        View::composer('layouts.app', function ($view) {
+        View::composer('*', function ($view) {
             $status = null;
     
             if (Auth::check()) {
-                $attendance = Attendance::where('user_id', Auth::id())
+                $attendance = Attendance::with('attendanceStatus')
+                    ->where('user_id', Auth::id())
                     ->where('date', now()->toDateString())
                     ->first();
     
