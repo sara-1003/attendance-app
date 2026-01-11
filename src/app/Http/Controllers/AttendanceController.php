@@ -142,7 +142,7 @@ class AttendanceController extends Controller
             ->where('user_id',$userId)
             ->whereYear('date', $displayMonth->year)
             ->whereMonth('date', $displayMonth->month)
-            ->orderBy('date','desc')
+            ->orderBy('date','asc')
             ->get();
 
         foreach($attendances as $attendance){
