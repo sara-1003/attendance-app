@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Attendance;
 use App\Models\AttendanceStatus;
 use App\Models\AttendanceBreak;
+use App\Models\AttendanceRequest;
+use App\Models\AttendanceRequestBreak;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
@@ -188,5 +190,41 @@ class AttendanceController extends Controller
         $nextMonth=$displayMonth->copy()->addMonth()->format('Y/m');
 
         return view('attendance.index',compact('attendances','displayMonth', 'prevMonth', 'nextMonth'));
+    }
+
+    // 勤怠詳細画面の表示
+    public function show($id)
+    {
+        $attendance=Attendance::with(['user','attendanceBreaks'])->findOrFail($id);
+
+        return view('attendance.show',compact('attendance'));
+    }
+
+    // 修正ボタンの実装
+    public function store(Request $request,Attendance $attendance)
+    {
+        $user=Auth::user();
+
+        $attendanceRequest=AttendanceRequest::create([
+            'attendance_id'=>$attendance->id,
+            'user_id'=>$user->id,
+            'new_clock_in'=>$request->clock_in,
+            'new_clock_out'=>$request->clock_out,
+            'reason'=>$request->reason ?? '未入力',
+        ]);
+
+        if($request->has('breaks')){
+            foreach($request->breaks as $break){
+                if (!empty($break['break_start']) || !empty($break['break_end'])) {
+                    AttendanceRequestBreak::create([
+                        'attendance_request_id' => $attendanceRequest->id,
+                        'break_start' => $break['break_start'] ?? null,
+                        'break_end' => $break['break_end'] ?? null,
+                    ]);
+                }
+            }
+        }
+        return redirect()
+        ->route('attendance.show', $attendance->id);
     }
 }

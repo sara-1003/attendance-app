@@ -29,6 +29,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/attendance/resume', [AttendanceController::class, 'resume'])->name('attendance.resume');
     Route::post('/attendance/end', [AttendanceController::class, 'end'])->name('attendance.end');
     Route::get('/attendance/list',[AttendanceController::class,'attendanceIndex'])->name('attendance.index');
+    Route::get('/attendance/detail/{id}',[AttendanceController::class,'show'])->name('attendance.show');
+    Route::post('/attendance/{attendance}/request',[AttendanceController::class,"store"])->name('attendance.request.store');
 });
 
 
