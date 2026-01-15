@@ -10,6 +10,7 @@ use App\Models\AttendanceBreak;
 use App\Models\AttendanceRequest;
 use App\Models\AttendanceRequestBreak;
 use Carbon\Carbon;
+use App\Http\Requests\ShowRequest;
 
 class AttendanceController extends Controller
 {
@@ -197,11 +198,16 @@ class AttendanceController extends Controller
     {
         $attendance=Attendance::with(['user','attendanceBreaks'])->findOrFail($id);
 
-        return view('attendance.show',compact('attendance'));
+        $request=AttendanceRequest::where('attendance_id',$attendance->id)
+            ->with('attendanceRequestBreaks')
+            ->latest()
+            ->first();
+
+        return view('attendance.show',compact('attendance','request'));
     }
 
     // 修正ボタンの実装
-    public function store(Request $request,Attendance $attendance)
+    public function store(ShowRequest $request,Attendance $attendance)
     {
         $user=Auth::user();
 
@@ -210,7 +216,7 @@ class AttendanceController extends Controller
             'user_id'=>$user->id,
             'new_clock_in'=>$request->clock_in,
             'new_clock_out'=>$request->clock_out,
-            'reason'=>$request->reason ?? '未入力',
+            'reason'=>$request->reason,
         ]);
 
         if($request->has('breaks')){
@@ -226,5 +232,24 @@ class AttendanceController extends Controller
         }
         return redirect()
         ->route('attendance.show', $attendance->id);
+    }
+
+    // 申請一覧画面の表示
+    public function list(Request $request)
+    {
+        $status=$request->query('status');
+
+        $query=AttendanceRequest::with(['attendance.user','approvalHistories'])
+            ->where('user_id', auth()->id());
+
+        if($status === 'pending'){
+            $query->whereDoesntHave('approvalHistories');
+        }elseif($status === 'approved'){
+            $query->whereHas('approvalHistories');
+        }
+
+        $requests = $query->latest()->get();
+
+        return view('attendance.list',compact('requests','status'));
     }
 }

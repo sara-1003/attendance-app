@@ -23,7 +23,7 @@ body {
     background: #fff;
     padding: 15px 0;
     border-radius: 10px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
 }
 
 .detail-table{
@@ -42,14 +42,12 @@ body {
     text-align: left;
     font-size: 16px;
     color: #5e5e5e;;
-    padding: 25px 30px 25px 60px;
+    padding: 40px 30px 40px 60px;
 }
 
 .detail-table__item{
-    display: flex;
     font-size: 16px;
     font-weight: bold;
-    padding: 25px 10px 25px 0;
 }
 
 .detail-table__item--name{
@@ -67,23 +65,30 @@ body {
     text-align: center;
 }
 
-.time-box{
-    display: inline-flex;
+.time-wrapper {
+    display: block;
+}
+
+.time-row {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    width: 120px;
-    height: 30px;
-    border: 1px solid #cbcbcb;
-    border-radius: 5px;
+}
+
+.time-box{
+    display: flex;
 }
 
 .time-box input {
+    width: 120px;
+    height: 30px;
     border: none;
     outline: none;
     background: transparent;
     box-shadow: none;
     font-size: 16px;
-
+    text-align: center;
+    border: 1px solid #cbcbcb;
+    border-radius: 5px;
 }
 
 .detail-table__item span{
@@ -98,6 +103,13 @@ body {
     padding: 10px 5px;
     font-size: 14px;
     resize: none;
+}
+
+.detail-table__item--reason {
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 25px 10px 0 0;
 }
 
 .detail__button{
@@ -118,4 +130,24 @@ body {
     padding: 5px 15px;
     font-size: 16px;
     cursor: pointer;
+}
+
+.detail__button-message{
+    text-align: center;
+    font-weight: bold;
+    color: #ff7979;
+    padding: 10px;
+    margin-top: 0;
+}
+
+.error{
+    display: block;
+    width: 100%;
+}
+
+.form__error {
+    min-height: 20px;
+    font-size: 15px;
+    color: #ff0000;
+    text-align: left;
 }
