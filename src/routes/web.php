@@ -2,8 +2,12 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Requests\AdminLoginRequest;
+use App\Http\Responses\LoginResponse;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +23,21 @@ use Illuminate\Http\Request;
 Route::get('/', function () {
     return redirect('/login');
 });
+
+Route::get('/admin/login', function () {
+    return view('admin.login');
+})->middleware('guest');
+// 管理者ログイン
+Route::post('/admin/login', function (AdminLoginRequest $request, LoginResponse $response) {
+    $request->authenticate();
+    $request->session()->regenerate();
+    return $response->toResponse($request);
+})->middleware(['guest', 'throttle:login']);
+
+Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
+    Route::get('/attendance/list', [AdminController::class, 'index'])->name('admin.attendance.list');
+});
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // 勤怠登録画面（認証済みのみ）

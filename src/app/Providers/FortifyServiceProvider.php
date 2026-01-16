@@ -42,7 +42,10 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.register');
         });
 
-        Fortify::loginView(function () {
+        Fortify::loginView(function (Request $request) {
+            if ($request->is('admin/login')) {
+                return view('admin.login');
+            }
             return view('auth.login');
         });
 
@@ -58,11 +61,20 @@ class FortifyServiceProvider extends ServiceProvider
 
 
         $this->app->bind(FortifyRegisterRequest::class, RegisterRequest::class);
-        $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
+        
+        $this->app->bind(FortifyLoginRequest::class, function ($app) {
+            $request = request();
+            if ($request->is('admin/login')) {
+                return $app->make(\App\Http\Requests\AdminLoginRequest::class);
+            }
+            return $app->make(\App\Http\Requests\LoginRequest::class);
+        });
+        
         $this->app->singleton(
             \Laravel\Fortify\Contracts\LoginResponse::class,
             LoginResponse::class
         );
+        
         $this->app->singleton(\Laravel\Fortify\Contracts\LogoutResponse::class, function () {
             return new class implements \Laravel\Fortify\Contracts\LogoutResponse {
                 public function toResponse($request)
