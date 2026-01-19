@@ -34,7 +34,7 @@
                 <td class="attendance-table__item">{{ optional($attendance->clock_out)->format('H:i') }}</td>
                 <td class="attendance-table__item">{{ $attendance->total_break_time ?? '0:00' }}</td>
                 <td class="attendance-table__item">{{ $attendance->work_time }}</td>
-                <td class="attendance-table__item"><a href="{{ route('attendance.show', $attendance->id) }}">詳細</a></td>
+                <td class="attendance-table__item"><a href="{{ route('admin.attendance.show', $attendance->id) }}">詳細</a></td>
             </tr>
             @endforeach
         </table>
