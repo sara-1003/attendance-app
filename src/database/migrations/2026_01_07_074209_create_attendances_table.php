@@ -21,6 +21,7 @@ class CreateAttendancesTable extends Migration
             $table->time('clock_out')->nullable();
             $table->foreignId('status_id')->constrained('attendance_statuses');
             $table->timestamps();
+            $table->unique(['user_id', 'date']);
         });
     }
 

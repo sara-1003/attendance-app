@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\RequestController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -53,7 +54,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/attendance/list',[AttendanceController::class,'attendanceIndex'])->name('attendance.index');
     Route::get('/attendance/detail/{id}',[AttendanceController::class,'show'])->name('attendance.show');
     Route::post('/attendance/{attendance}/request',[AttendanceController::class,"store"])->name('attendance.request.store');
-    Route::get('/stamp_correction_request/list',[AttendanceController::class,"list"])->name('attendance.list');
 });
 
 
@@ -79,3 +79,8 @@ Route::middleware('auth')->group(function () {
         return redirect('http://localhost:8025');
     })->name('verification.external');
 });
+
+// 一般と管理者の申請一覧（ルートが同じ）
+Route::get('/stamp_correction_request/list', [RequestController::class, 'list'])
+    ->middleware('auth')
+    ->name('request.list');

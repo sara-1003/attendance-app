@@ -233,23 +233,4 @@ class AttendanceController extends Controller
         return redirect()
         ->route('attendance.show', $attendance->id);
     }
-
-    // 申請一覧画面の表示
-    public function list(Request $request)
-    {
-        $status=$request->query('status');
-
-        $query=AttendanceRequest::with(['attendance.user','approvalHistories'])
-            ->where('user_id', auth()->id());
-
-        if($status === 'pending'){
-            $query->whereDoesntHave('approvalHistories');
-        }elseif($status === 'approved'){
-            $query->whereHas('approvalHistories');
-        }
-
-        $requests = $query->latest()->get();
-
-        return view('attendance.list',compact('requests','status'));
-    }
 }
