@@ -42,7 +42,13 @@
                 <td class="attendance-table__item">
                     {{ $request->created_at->format('Y/m/d') }}
                 </td>
-                <td class="attendance-table__item"><a href="{{ route('attendance.show', $request->attendance->id) }}">詳細</a></td>
+                <td class="attendance-table__item">
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('request.approval',$request->id) }}">詳細</a>
+                    @else
+                        <a href="{{ route('attendance.show', $request->attendance->id) }}">詳細</a>
+                    @endif
+                </td>
             </tr>
             @endforeach
         </table>

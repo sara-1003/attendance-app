@@ -84,3 +84,6 @@ Route::middleware('auth')->group(function () {
 Route::get('/stamp_correction_request/list', [RequestController::class, 'list'])
     ->middleware('auth')
     ->name('request.list');
+
+// 修正申請承認画面の表示
+Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}',[RequestController::class,'approval'])->middleware(['auth','admin'])->name('request.approval');

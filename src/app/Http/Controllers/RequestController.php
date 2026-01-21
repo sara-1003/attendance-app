@@ -29,4 +29,18 @@ class RequestController extends Controller
 
         return view('request.list',compact('requests','status'));
     }
+
+    // 修正申請承認画面の表示
+    public function approval($attendance_correct_request_id)
+    {
+        $request=AttendanceRequest::with([
+            'attendance.user',
+            'attendance.attendanceBreaks',
+            'attendanceRequestBreaks',
+        ])->findOrFail($attendance_correct_request_id);
+
+        $attendance=$request->attendance;
+
+        return view('request.approve',compact('request','attendance'));
+    }
 }

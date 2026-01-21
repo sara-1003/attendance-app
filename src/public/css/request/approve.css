@@ -1,0 +1,94 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #f1f1f1;
+}
+
+.attendance-detail {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.attendance-detail__heading {
+    font-size: 28px;
+    margin-bottom: 30px;
+    border-left: 7px solid #000;
+    padding-left: 15px;
+}
+
+.attendance-detail__card {
+    background: #fff;
+    padding: 15px 0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.detail-table {
+    width: 100%;
+}
+
+.detail-table__row {
+    border-bottom: 1px solid #cbcbcb;
+}
+
+.detail-table__row:last-child {
+    border: none;
+}
+
+.detail-table__header {
+    text-align: left;
+    font-size: 16px;
+    color: #5e5e5e;
+    padding: 40px 30px 40px 60px;
+}
+
+.detail-table__item {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.date-box {
+    display: grid;
+    grid-template-columns: 120px auto;
+    column-gap: 85px;
+    align-items: center;
+}
+
+.time-box {
+    display: grid;
+    grid-template-columns: 120px 70px 120px;
+    column-gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.detail-table__item span {
+    margin: 0;
+}
+
+.time-text{
+    font-weight: bold;
+}
+
+.approval__button {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.approval__button-submit {
+    width: 100px;
+    height: 40px;
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    font-size: 16px;
+    cursor: pointer;
+}

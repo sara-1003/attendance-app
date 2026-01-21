@@ -72,6 +72,7 @@ body {
 .time-row {
     display: flex;
     align-items: center;
+    margin-bottom: 10px;
 }
 
 .time-box{
@@ -146,8 +147,9 @@ body {
 }
 
 .form__error {
-    min-height: 20px;
+    min-height: 24px;
     font-size: 15px;
     color: #ff0000;
     text-align: left;
+    margin-top: 5px;
 }
