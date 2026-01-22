@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\AttendanceRequest;
+use App\Models\Attendance;
+use App\Models\ApprovalHistory;
+use Illuminate\Support\Facades\DB;
+
 
 class RequestController extends Controller
 {
@@ -41,6 +45,48 @@ class RequestController extends Controller
 
         $attendance=$request->attendance;
 
-        return view('request.approve',compact('request','attendance'));
+        $approved=ApprovalHistory::where('attendance_request_id',$request->id)->exists();
+
+        return view('request.approve',compact('request','attendance','approved'));
+    }
+
+    // 承認ボタンの実装
+    public function approve($attendance_request_id)
+    {
+        DB::transaction(function () use ($attendance_request_id) {
+
+        // 修正申請を取得（休憩も）
+        $attendanceRequest = AttendanceRequest::with('attendanceRequestBreaks')
+            ->findOrFail($attendance_request_id);
+
+        $attendance = Attendance::findOrFail($attendanceRequest->attendance_id);
+
+        // 出退勤を更新
+        $attendance->update([
+            'clock_in'  => $attendanceRequest->new_clock_in,
+            'clock_out' => $attendanceRequest->new_clock_out,
+        ]);
+
+        // 既存の休憩を削除
+        $attendance->attendanceBreaks()->delete();
+
+        // 申請された休憩を登録
+        foreach ($attendanceRequest->attendanceRequestBreaks as $break) {
+            if (!empty($break->break_start) || !empty($break->break_end)) {
+                $attendance->attendanceBreaks()->create([
+                    'break_start' => $break->break_start,
+                    'break_end'   => $break->break_end,
+                ]);
+            }
+        }
+
+        ApprovalHistory::create([
+            'attendance_request_id'=>$attendanceRequest->id,
+            'admin_user_id'=>auth()->id(),
+        ]);
+    });
+
+    return redirect()->route('request.approval', $attendance_request_id);
+
     }
 }

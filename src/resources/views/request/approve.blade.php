@@ -8,7 +8,7 @@
 @section('content')
 <div class="attendance-detail">
     <h1 class="attendance-detail__heading">勤怠詳細</h1>
-    <form class="detail-form" action="" method="post">
+    <form class="detail-form" action="{{ route('request.approve', $request->id) }}" method="post">
         @csrf
         <div class="attendance-detail__card">
             <table class="detail-table">
@@ -70,7 +70,11 @@
             </table>
         </div>
         <div class="approval__button">
-            <button class="approval__button-submit" type="submit">承認</button>
+            @if($approved)
+                <button class="approved__button" type="button">承認済み</button>
+            @else
+                <button class="approval__button-submit" type="submit">承認</button>
+            @endif
         </div>
     </form>
 </div>

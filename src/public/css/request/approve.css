@@ -81,6 +81,17 @@ body {
     justify-content: flex-end;
 }
 
+.approved__button{
+    width: 100px;
+    height: 40px;
+    background: #777777;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px 15px;
+    font-size: 16px;
+}
+
 .approval__button-submit {
     width: 100px;
     height: 40px;

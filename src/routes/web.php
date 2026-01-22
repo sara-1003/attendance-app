@@ -87,3 +87,5 @@ Route::get('/stamp_correction_request/list', [RequestController::class, 'list'])
 
 // 修正申請承認画面の表示
 Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}',[RequestController::class,'approval'])->middleware(['auth','admin'])->name('request.approval');
+// 承認ボタンの実装
+Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}',[RequestController::class,'approve'])->middleware(['auth','admin'])->name('request.approve');
