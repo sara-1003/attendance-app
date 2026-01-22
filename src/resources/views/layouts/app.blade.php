@@ -12,7 +12,16 @@
 <body>
     <header class="header">
         <div class="header__inner">
-            <a class="header__logo" href="{{ auth()->check() ? '/attendance' : '/login' }}">
+            <a class="header__logo"
+            href="
+            @auth
+                {{ auth()->user()->role === 'admin'
+                    ? route('admin.attendance.list')
+                    : route('attendance.store') }}
+            @else
+                {{ url('/login') }}
+            @endauth
+            ">
                 <img src="{{ asset('images/header.png') }}" alt="COACHTECH">
             </a>
             @auth

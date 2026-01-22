@@ -8,8 +8,8 @@
 <div class="attendance-list">
     <h1 class="attendance-list__heading">申請一覧</h1>
     <div class="attendance-tabs">
-        <a class="tab__pending {{ request('status') === 'pending' ? 'active' : '' }}" href="{{ route('request.list', ['status' => 'pending']) }}">承認待ち</a>
-        <a class="tab__approved {{ request('status') === 'approved' ? 'active' : '' }}" href="{{ route('request.list', ['status' => 'approved']) }}">承認済み</a>
+        <a class="tab__pending {{ request('status','pending') === 'pending' ? 'active' : '' }}" href="{{ route('request.list', ['status' => 'pending']) }}">承認待ち</a>
+        <a class="tab__approved {{ request('status','pending') === 'approved' ? 'active' : '' }}" href="{{ route('request.list', ['status' => 'approved']) }}">承認済み</a>
     </div>
     <div class="attendance-table">
         <table class="attendance-table__inner">

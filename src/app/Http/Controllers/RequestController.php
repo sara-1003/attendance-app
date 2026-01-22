@@ -14,7 +14,7 @@ class RequestController extends Controller
     // 申請一覧画面の表示
     public function list(Request $request)
     {
-        $status=$request->query('status');
+        $status=$request->query('status','pending');
 
         $query=AttendanceRequest::with(['attendance.user','approvalHistories']);
 
