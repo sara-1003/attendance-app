@@ -41,7 +41,11 @@
         </table>
     </div>
 </div>
-<div class="output__button">
-    <button class="output__button-submit" type="submit">CSV出力</button>
-</div>
+<form action="{{ route('admin.attendance.staff.csv',$staff->id) }}">
+    @csrf
+    <div class="output__button">
+        <input type="hidden" name="month" value="{{ $displayMonth->format('Y-m') }}">
+        <button class="output__button-submit" type="submit">CSV出力</button>
+    </div>
+</form>
 @endsection

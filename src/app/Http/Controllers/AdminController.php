@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Attendance;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class AdminController extends Controller
 {
@@ -153,5 +154,86 @@ class AdminController extends Controller
     'prevMonth',
     'nextMonth'
     ));
+    }
+
+    // csvボタンの実装
+    public function export(Request $request,$id)
+    {
+        $displayMonth = $request->input('month')
+            ? Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth()
+            : Carbon::now()->startOfMonth();
+
+        $staff = User::findOrFail($id);
+
+        $attendances = Attendance::with('attendanceBreaks')
+            ->where('user_id', $id)
+            ->whereBetween('date', [
+        $displayMonth->copy()->startOfMonth(),
+        $displayMonth->copy()->endOfMonth(),
+        ])
+        ->orderBy('date', 'asc')
+        ->get();
+
+        $csvHeader = ['日付', '出勤', '退勤', '休憩時間', '勤務時間'];
+        $csvData = [];
+
+        foreach ($attendances as $attendance) {
+
+        $totalBreakSeconds = 0;
+        foreach ($attendance->attendanceBreaks as $break) {
+            if ($break->break_start && $break->break_end) {
+                $start = Carbon::parse($break->break_start);
+                $end = Carbon::parse($break->break_end);
+                $totalBreakSeconds += $start->diffInSeconds($end);
+            }
+        }
+        $h = floor($totalBreakSeconds / 3600);
+        $m = floor(($totalBreakSeconds % 3600) / 60);
+        $totalBreakTime = sprintf('%d:%02d', $h, $m);
+
+        if ($attendance->clock_in && $attendance->clock_out) {
+            $workSeconds =
+                Carbon::parse($attendance->clock_in)
+                    ->diffInSeconds(Carbon::parse($attendance->clock_out))
+                - $totalBreakSeconds;
+
+            if ($workSeconds < 0) $workSeconds = 0;
+
+            $wh = floor($workSeconds / 3600);
+            $wm = floor(($workSeconds % 3600) / 60);
+            $workTime = sprintf('%d:%02d', $wh, $wm);
+        } else {
+            $workTime = '';
+        }
+
+        $csvData[] = [
+            $attendance->date,
+            optional($attendance->clock_in)->format('H:i'),
+            optional($attendance->clock_out)->format('H:i'),
+            $totalBreakTime,
+            $workTime,
+        ];
+    }
+
+    $fileName = $staff->name . '_' . $displayMonth->format('Y_m') . '_attendance.csv';
+
+    $callback = function() use ($csvHeader, $csvData) {
+        $file = fopen('php://output', 'w');
+
+        fputs($file, "\xEF\xBB\xBF");
+
+        fputcsv($file, $csvHeader);
+
+        foreach ($csvData as $row) {
+            fputcsv($file, $row);
+        }
+
+        fclose($file);
+    };
+
+    return Response::stream($callback, 200, [
+        "Content-Type" => "text/csv",
+        "Content-Disposition" => "attachment; filename={$fileName}",
+    ]);
     }
 }

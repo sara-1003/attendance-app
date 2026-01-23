@@ -40,6 +40,7 @@ Route::prefix('admin')->middleware(['auth', 'admin'])->group(function() {
     Route::get('/attendance/{id}', [AdminController::class, 'show'])->name('admin.attendance.show');
     Route::get('/staff/list',[AdminController::class,'staffIndex'])->name('admin.staff.index');
     Route::get('/attendance/staff/{id}',[AdminController::class,'staffAttendance'])->name('admin.attendance.staff');
+    Route::get('/attendance/staff/{id}/csv',[AdminController::class,'export'])->name('admin.attendance.staff.csv');
 });
 
 
