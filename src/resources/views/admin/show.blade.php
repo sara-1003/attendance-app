@@ -65,6 +65,10 @@
                     }else{
                         $breaks = $attendance->attendanceBreaks;
                     }
+                    $realBreakCount = $breaks->filter(function($b){
+                        return !empty($b->break_start) || !empty($b->break_end);
+                    })->count();
+
                     $breaksForView = $breaks->values();
                     $breaksForView->push((object)['break_start' => null, 'break_end' => null]);
                 @endphp
@@ -74,7 +78,7 @@
                     @continue
                     @endif
                 <tr class="detail-table__row">
-                    <th class="detail-table__header">休憩{{ $i + 1 }}</th>
+                    <th class="detail-table__header">休憩{{ $breaks->count() > 1 ? $i + 1 : '' }}</th>
                     <td class="detail-table__item">
                         <div class="time-row">
                         @if(!$request)

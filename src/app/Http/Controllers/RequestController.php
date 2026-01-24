@@ -20,7 +20,9 @@ class RequestController extends Controller
 
     // 一般ユーザーなら自分の分だけ
         if (auth()->user()->role !== 'admin') {
-            $query->where('user_id', auth()->id());
+            $query->whereHas('attendance', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
         }
 
         if($status === 'pending'){
@@ -29,7 +31,7 @@ class RequestController extends Controller
             $query->whereHas('approvalHistories');
         }
 
-        $requests = $query->latest()->get();
+        $requests = $query->oldest()->get();
 
         return view('request.list',compact('requests','status'));
     }

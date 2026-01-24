@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="attendance-index">
-    <h1 class="attendance-index__heading">{{ $displayDate->format('Y年m月d日') }}の勤怠</h1>
+    <h1 class="attendance-index__heading">{{ $displayDate->format('Y年n月j日') }}の勤怠</h1>
     <div class="attendance-index__date">
         <a class="date__item" href="{{ route('admin.attendance.list', ['date' => $prevDate]) }}">
             <img class="date__item--left" src="{{ asset('images/yajirushi.png') }}" alt="前日">前日</a>
