@@ -11,7 +11,9 @@
     <div class="attendance__date">
         {{ now()->locale('ja')->isoFormat('YYYY年M月D日(ddd)') }}
     </div>
-    <div class="attendance__time" id="clock"></div>
+    <div class="attendance__time" id="clock">
+        {{ now()->format('H:i') }}
+    </div>
     <div class="attendance__buttons">
         @if($status === '勤務外')
         <form action="{{ route('attendance.start') }}" method="post">
@@ -49,7 +51,6 @@ function updateClock() {
     const m = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('clock').textContent = `${h}:${m}`;
 }
-updateClock();
 setInterval(updateClock, 1000);
 </script>
 @endsection
