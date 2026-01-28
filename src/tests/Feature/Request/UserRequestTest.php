@@ -8,15 +8,7 @@ use Tests\TestCase;
 
 class UserRequestTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
-    {
-        $response = $this->get('/');
+    use RefreshDatabase;
 
-        $response->assertStatus(200);
-    }
+
 }
