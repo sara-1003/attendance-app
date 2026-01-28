@@ -6,9 +6,11 @@ use App\Http\Requests\AdminLoginRequest;
 use Laravel\Fortify\Contracts\LoginResponse;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Models\AttendanceBreak;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
+use App\Http\Requests\AdminShowRequest;
 
 class AdminController extends Controller
 {
@@ -84,6 +86,35 @@ class AdminController extends Controller
         $request = $attendance->attendanceRequests()->latest()->first();
 
         return view('attendance.show', compact('attendance', 'request'));
+    }
+
+    // 勤怠修正
+    public function update(AdminShowRequest $request, $id)
+    {
+        $request->validate([
+            'clock_in' => 'required',
+            'clock_out' => 'required',
+        ]);
+
+        $attendance = Attendance::with('attendanceBreaks')->findOrFail($id);
+
+        $attendance->update([
+            'clock_in' => $request->clock_in,
+            'clock_out' => $request->clock_out,
+        ]);
+
+        if ($request->has('breaks')) {
+            foreach ($request->breaks as $index => $breakData) {
+                if (isset($attendance->attendanceBreaks[$index])) {
+                    $attendance->attendanceBreaks[$index]->update([
+                        'break_start' => $breakData['break_start'] ?? null,
+                        'break_end' => $breakData['break_end'] ?? null,
+                    ]);
+                }
+            }
+        }
+
+        return back();
     }
 
     // スタッフ一覧画面の表示

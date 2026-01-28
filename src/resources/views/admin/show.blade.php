@@ -8,7 +8,7 @@
 @section('content')
 <div class="attendance-detail">
     <h1 class="attendance-detail__heading">勤怠詳細</h1>
-    <form class="detail-form" action="/attendance/{{ $attendance->id }}/request" method="post">
+    <form class="detail-form" action="{{ route('admin.attendance.update', $attendance->id) }}" method="post">
         @csrf
         <div class="attendance-detail__card">
             <table class="detail-table">
