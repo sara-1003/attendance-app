@@ -33,22 +33,33 @@
                     <td class="detail-table__item">
                         <div class="time-wrapper">
                             <div class="time-row">
-                                @if(!$request)
-                                <div class="time-box">
-                                    <input type="text" name="clock_in" value="{{ old('clock_in', optional($attendance->clock_in)->format('H:i')) }}">
-                                </div>
-                                @else
-                                <span class="time-text">{{ \Carbon\Carbon::parse($request->new_clock_in)->format('H:i') }}</span>
-                                @endif
+                            @if(!$approved)
+                            <div class="time-box">
+                                <input type="text" name="clock_in"value="{{ old('clock_in',$request
+                                ? \Carbon\Carbon::parse($request->new_clock_in)->format('H:i')
+                                : optional($attendance->clock_in)->format('H:i')) }}">
+                            </div>
+                            @else
+                            <span class="time-text">
+                                {{ \Carbon\Carbon::parse(
+                                    $request ? $request->new_clock_in : $attendance->clock_in
+                                )->format('H:i') }}
+                            </span>
+                            @endif
                                 <span>〜</span>
-                                @if(!$request)
-                                <div class="time-box">
-                                    <input type="text" name="clock_out" value="{{ old('clock_out', optional($attendance->clock_out)->format('H:i')) }}">
-                                </div>
-                                @else
-                                <span class="time-text">
-                                    {{ \Carbon\Carbon::parse($request->new_clock_out)->format('H:i') }}</span>
-                                @endif
+                            @if(!$approved)
+                            <div class="time-box">
+                                <input type="text" name="clock_out"value="{{ old('clock_out',$request
+                                ? \Carbon\Carbon::parse($request->new_clock_out)->format('H:i')
+                                : optional($attendance->clock_out)->format('H:i')) }}">
+                            </div>
+                            @else
+                            <span class="time-text">
+                                {{ \Carbon\Carbon::parse(
+                                    $request ? $request->new_clock_out : $attendance->clock_out
+                                )->format('H:i') }}
+                            </span>
+                            @endif
                             </div>
                             <div class="error">
                                 @if ($errors->has('clock_in') || $errors->has('clock_out'))
@@ -78,25 +89,41 @@
                     @continue
                     @endif
                 <tr class="detail-table__row">
-                    <th class="detail-table__header">休憩{{ $breaks->count() > 1 ? $i + 1 : '' }}</th>
+                    <th class="detail-table__header">休憩{{ $i === 0 ? '' : $i + 1 }}</th>
                     <td class="detail-table__item">
                         <div class="time-row">
-                        @if(!$request)
+                        @if(!$approved)
                         <div class="time-box">
-                            <input type="text" name="breaks[{{ $i }}][break_start]" value="{{ old("breaks.$i.break_start", $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '') }}">
-                        </div>
-                        @else
-                        <span class="time-text">
-                        {{ $break->break_start ? \Carbon\Carbon::parse($break->break_start)->format('H:i') : '-' }}</span>
-                        @endif
-                        <span>〜</span>
-                        @if(!$request)
-                        <div class="time-box">
-                            <input type="text" name="breaks[{{ $i }}][break_end]" value="{{ old("breaks.$i.break_end", $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '') }}">
-                        </div>
-                        @else
-                        <span class="time-text">{{ $break->break_end ? \Carbon\Carbon::parse($break->break_end)->format('H:i') : '-' }}</span>
-                        @endif
+                            <input type="text"
+                            name="breaks[{{ $i }}][break_start]"value="{{ old("breaks.$i.break_start",
+                            $break->break_start
+                            ? \Carbon\Carbon::parse($break->break_start)->format('H:i')
+                            : ''
+                        ) }}">
+                    </div>
+                    @else
+                    <span class="time-text">
+                        {{ $break->break_start
+                            ? \Carbon\Carbon::parse($break->break_start)->format('H:i')
+                        : '-' }}
+                    </span>
+                    @endif
+                    <span>〜</span>
+                    @if(!$approved)
+                    <div class="time-box">
+                        <input type="text" name="breaks[{{ $i }}][break_end]"value="{{ old("breaks.$i.break_end",
+                        $break->break_end
+                            ? \Carbon\Carbon::parse($break->break_end)->format('H:i')
+                            : ''
+                        ) }}">
+                    </div>
+                    @else
+                    <span class="time-text">
+                        {{ $break->break_end
+                            ? \Carbon\Carbon::parse($break->break_end)->format('H:i')
+                        : '-' }}
+                    </span>
+                    @endif
                         </div>
                         <div class="error">
                             @if ($errors->has("breaks.$i.break_start") || $errors->has("breaks.$i.break_end"))
@@ -109,27 +136,20 @@
                 <tr class="detail-table__row">
                     <th class="detail-table__header">備考</th>
                     <td class="detail-table__item--reason">
-                        @if(!$request)
-                            <textarea class="detail-table__textarea" name="reason" id="reason"></textarea>
-                            <div class="error">
-                                <p class="form__error">
-                                    @error('reason')
-                                    {{ $message }}
-                                    @enderror
-                                </p>
-                            </div>
-                        @else
-                            <p class="detail-text">{{ $request->reason }}</p>
-                        @endif
+                    @if(!$approved)
+                    <textarea class="detail-table__textarea" name="reason">{{ old('reason', $request->reason ?? '') }}</textarea>
+                    @else
+                    <p class="detail-text">{{ $request->reason ?? '' }}</p>
+                    @endif
                     </td>
                 </tr>
             </table>
         </div>
-        <div class="detail__button">
-            @if(!$request)
-                <button class="detail__button-submit">修正</button>
+        <div class="approval__button">
+            @if($approved)
+                <button class="approved__button" type="button">承認済み</button>
             @else
-                <p class="detail__button-message">※承認待ちのため修正はできません。</p>
+                <button class="detail__button-submit">修正</button>
             @endif
         </div>
     </form>

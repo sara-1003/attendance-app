@@ -85,7 +85,12 @@ class AdminController extends Controller
 
         $request = $attendance->attendanceRequests()->latest()->first();
 
-        return view('attendance.show', compact('attendance', 'request'));
+        $approved = false;
+        if ($request) {
+            $approved = $request->approvalHistories()->exists();
+        }
+
+        return view('admin.show', compact('attendance', 'request','approved'));
     }
 
     // 勤怠修正
@@ -103,18 +108,37 @@ class AdminController extends Controller
             'clock_out' => $request->clock_out,
         ]);
 
+        $attendance->attendanceBreaks()->delete();
+
         if ($request->has('breaks')) {
-            foreach ($request->breaks as $index => $breakData) {
-                if (isset($attendance->attendanceBreaks[$index])) {
-                    $attendance->attendanceBreaks[$index]->update([
-                        'break_start' => $breakData['break_start'] ?? null,
-                        'break_end' => $breakData['break_end'] ?? null,
+            foreach ($request->breaks as $break) {
+                if (!empty($break['break_start']) || !empty($break['break_end'])) {
+                    AttendanceBreak::create([
+                        'attendance_id' => $attendance->id,
+                        'break_start' => $break['break_start'] ?? null,
+                        'break_end' => $break['break_end'] ?? null,
                     ]);
                 }
             }
         }
 
-        return back();
+        $attendanceRequest = $attendance->attendanceRequests()->latest()->first();
+
+        if (!$attendanceRequest) {
+            $attendanceRequest = $attendance->attendanceRequests()->create([
+                'user_id' => $attendance->user_id,
+                'reason' => $request->reason,
+                'new_clock_in' => $attendance->clock_in,
+                'new_clock_out' => $attendance->clock_out,
+            ]);
+        }
+
+        $attendanceRequest->approvalHistories()->create([
+            'admin_user_id' => auth()->id(),
+        ]);
+
+        return redirect()
+            ->route('admin.attendance.show', $attendance->id);
     }
 
     // スタッフ一覧画面の表示
@@ -129,11 +153,11 @@ class AdminController extends Controller
     public function staffAttendance(Request $request, $id)
     {
         $displayMonth = $request->input('month')
-        ? Carbon::createFromFormat('Y-m', $request->input('month'))->startOfMonth()
-        : Carbon::now()->startOfMonth();
+        ? Carbon::createFromFormat('Y-m-d', $request->input('month') . '-01')
+        : Carbon::today()->startOfMonth();
 
-        $prevMonth = $displayMonth->copy()->subMonth()->format('Y-m');
-        $nextMonth = $displayMonth->copy()->addMonth()->format('Y-m');
+        $prevMonth = $displayMonth->copy()->subMonthNoOverflow()->format('Y-m');
+        $nextMonth = $displayMonth->copy()->addMonthNoOverflow()->format('Y-m');
 
         $staff = User::findOrFail($id);
 

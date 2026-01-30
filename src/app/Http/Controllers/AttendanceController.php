@@ -135,10 +135,11 @@ class AttendanceController extends Controller
 
         // 月の取得
         $month=$request->input('month');
-        if($month){
-            $displayMonth=Carbon::createFromFormat('Y/m',$month);
-        }else{
-            $displayMonth=Carbon::now();
+
+        if ($month) {
+            $displayMonth = Carbon::createFromFormat('Y-m-d', $month . '-01')->startOfMonth();
+        } else {
+            $displayMonth = Carbon::today()->startOfMonth();
         }
 
         $attendances=Attendance::with('attendanceBreaks')
@@ -186,9 +187,8 @@ class AttendanceController extends Controller
                 $attendance->work_time='0:00';
             }
         }
-
-        $prevMonth=$displayMonth->copy()->subMonth()->format('Y/m');
-        $nextMonth=$displayMonth->copy()->addMonth()->format('Y/m');
+        $prevMonth = $displayMonth->copy()->subMonthNoOverflow()->format('Y-m');
+        $nextMonth = $displayMonth->copy()->addMonthNoOverflow()->format('Y-m');
 
         return view('attendance.index',compact('attendances','displayMonth', 'prevMonth', 'nextMonth'));
     }

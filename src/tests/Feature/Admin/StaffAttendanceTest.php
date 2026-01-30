@@ -36,8 +36,15 @@ class StaffAttendanceTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $user1 = User::factory()->create(['name' => '山田太郎']);
-        $user2 = User::factory()->create(['name' => '佐藤花子']);
+        $user1 = User::factory()->create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+        ]);
+        
+        $user2 = User::factory()->create([
+            'name' => '佐藤花子',
+            'email' => 'sato@example.com',
+        ]);
 
         Attendance::factory()->create([
             'user_id' => $user1->id,
@@ -93,8 +100,15 @@ class StaffAttendanceTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $user1 = User::factory()->create(['name' => '山田太郎']);
-        $user2 = User::factory()->create(['name' => '佐藤花子']);
+        $user1 = User::factory()->create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+        ]);
+        
+        $user2 = User::factory()->create([
+            'name' => '佐藤花子',
+            'email' => 'sato@example.com',
+        ]);
 
         Attendance::factory()->create([
             'user_id' => $user1->id,
@@ -136,8 +150,15 @@ class StaffAttendanceTest extends TestCase
             'email_verified_at' => now(),
         ]);
 
-        $user1 = User::factory()->create(['name' => '山田太郎']);
-        $user2 = User::factory()->create(['name' => '佐藤花子']);
+        $user1 = User::factory()->create([
+            'name' => '山田太郎',
+            'email' => 'yamada@example.com',
+        ]);
+        
+        $user2 = User::factory()->create([
+            'name' => '佐藤花子',
+            'email' => 'sato@example.com',
+        ]);
 
         Attendance::factory()->create([
             'user_id' => $user1->id,
