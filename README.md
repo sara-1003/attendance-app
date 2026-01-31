@@ -1,5 +1,9 @@
 # attendance-app(勤怠管理アプリ)
 
+## アプリ概要
+勤怠の打刻・修正申請・承認を行う勤怠管理アプリです。
+一般ユーザーと管理者で権限を分け、実務を想定した勤怠フローを実装しています。
+
 ## 環境構築
 **Dockerビルド**
 1. `git clone git@github.com:sara-1003/attendance-app.git`
