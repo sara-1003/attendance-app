@@ -31,7 +31,11 @@ class RequestController extends Controller
             $query->whereHas('approvalHistories');
         }
 
-        $requests = $query->oldest()->get();
+        $requests = $query
+            ->join('attendances', 'attendance_requests.attendance_id', '=', 'attendances.id')
+            ->orderBy('attendances.date', 'asc')
+            ->select('attendance_requests.*')
+            ->get();
 
         return view('request.list',compact('requests','status'));
     }

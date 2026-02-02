@@ -138,6 +138,9 @@
                     <td class="detail-table__item--reason">
                     @if(!$approved)
                     <textarea class="detail-table__textarea" name="reason">{{ old('reason', $request->reason ?? '') }}</textarea>
+                        @if($errors->has('reason'))
+                            <p class="form__error">{{ $errors->first('reason') }}</p>
+                        @endif
                     @else
                     <p class="detail-text">{{ $request->reason ?? '' }}</p>
                     @endif

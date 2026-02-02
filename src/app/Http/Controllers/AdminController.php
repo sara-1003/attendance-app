@@ -96,11 +96,6 @@ class AdminController extends Controller
     // 勤怠修正
     public function update(AdminShowRequest $request, $id)
     {
-        $request->validate([
-            'clock_in' => 'required',
-            'clock_out' => 'required',
-        ]);
-
         $attendance = Attendance::with('attendanceBreaks')->findOrFail($id);
 
         $attendance->update([
